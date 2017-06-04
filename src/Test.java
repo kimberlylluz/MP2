@@ -22,7 +22,7 @@ public class Test extends JFrame{
 		
 		jpanel = new JPanel();
         jpanel.setLocation(0,0);
-		jpanel.setSize(1000,650);
+		jpanel.setSize(1000,450);
 		jpanel.setLayout(layout);
 		
 		jpanel.add(main, "Main");
@@ -43,12 +43,12 @@ public class Test extends JFrame{
 	
 	public static void main(String[] args){
 		Test test = new Test();
-		test.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		test.setLayout(null);
+		test.setVisible(true);
 		test.setSize(1000, 650);
 		test.setResizable(false);
 		test.setLocationRelativeTo(null);
 		test.setContentPane(test.main.mainLabel);
-		test.setVisible(true);
-		test.setLayout(null);
+		test.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 }
