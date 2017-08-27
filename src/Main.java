@@ -1,31 +1,27 @@
-import java.awt.event.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.*;
 import java.awt.*;
-import java.util.*;
-import javax.swing.*;
-import javax.imageio.*;
 import java.awt.image.*;
+import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.*;
 import java.util.regex.*;
+import javax.imageio.*;
 
 public class Main extends JPanel{
-	String imageName;
-	String freqName, yunoName, renderFilename;
+	String imageName, freqName, yunoName, renderFilename; 
 	private Test test;
 	public static JLabel mainLabel;
 	public static JButton originalImage, compressedImage;
 	ImageIcon icon = new ImageIcon(getClass().getResource("bg.png"));
-	boolean clickedB = false, clickedF = false, clickedT = false, clickedC = false, clickedR = false, cNewImage = false, trainable = false, compressable = false, renderable = false, done = false;
-	private JButton buttons, train, compress, render, file, newImage, exit, close, openButton, trainButton, compressButton, renderButton;
-	
+	boolean exist = false, clickedB = false, clickedF = false, clickedT = false, clickedC = false, clickedR = false, cNewImage = true, trainable = false, compressable = false, renderable = false, done = false;
+	private JButton buttons, train, compress, render, file, newImage, exit, close, openButton, trainButton, compressButton, renderButton;	
 	Heap heap;
 	int n = 0, count = 0, numPix = 0, maxPixels = 0, frequency = 0, r = 0, g =  0, b = 0, red = 0, green = 0, blue = 0, width = 368, height = 424;
-	Color[] color;
+	Color[] color, entryPixels = null;;
 	BufferedImage image;
-	boolean exist = false;
-	Color[] entryPixels = null;
 	Node[] node = new Node[numPix];
 	Node root = null, head = null, current = null;	
 	
@@ -103,7 +99,7 @@ public class Main extends JPanel{
 		mainLabel.add(modifyButton(close));
 		
 		openButton = new JButton(new ImageIcon(getClass().getResource("open.png")));
-        openButton.setRolloverIcon(new ImageIcon(getClass().getResource("open.png")));
+        openButton.setRolloverIcon(new ImageIcon(getClass().getResource("openhover.png")));
 		openButton.setLocation(90,569);
 		openButton.setSize(88, 59);
 		openButton.setVisible(true);
@@ -135,7 +131,6 @@ public class Main extends JPanel{
 		compressButton.addActionListener(handler);
 		trainButton.addActionListener(handler);
 		openButton.addActionListener(handler);
-		newImage.addActionListener(handler);
 		compress.addActionListener(handler);
 		buttons.addActionListener(handler);
 		render.addActionListener(handler);
@@ -181,12 +176,6 @@ public class Main extends JPanel{
 					exit.setVisible(true);
 					clickedF = true;
 				}
-			}else if(event.getSource() == newImage){
-				file.setIcon(new ImageIcon(getClass().getResource("file.png")));
-				newImage.setVisible(false);
-				exit.setVisible(false);
-				clickedF = false;
-				clearAll();
 			}else if(event.getSource() == train){
 				if(clickedT == true){
 					train.setIcon(new ImageIcon(getClass().getResource("train.png")));
@@ -267,7 +256,6 @@ public class Main extends JPanel{
 							maxPixels++;
 						}
 					}
-	
 					System.out.println("processing.");
 					findUnique();
 					System.out.println("processing..");
@@ -316,7 +304,6 @@ public class Main extends JPanel{
 					label.add(pic);
 					mainLabel.add(label);
 					mainLabel.repaint();
-					
 				}
 			}
 		}
@@ -324,7 +311,6 @@ public class Main extends JPanel{
 	
 	public void compress(){
 		boolean checker = false;
-		
 		File file = new File(yunoName);
 		File file2 = new File(freqName);
 		
@@ -338,13 +324,10 @@ public class Main extends JPanel{
 				fileReader = new FileReader(file2);
 				scan = null;
 				scan = new Scanner(fileReader);
-				
-				
 				checker = false;
 				
 				while (scan.hasNext()){
-					code = scan.next();
-					
+					code = scan.next();					
 					if (color[i].toString().equals(code)){
 						fileWriter.write(scan.next()+"\n");
 						checker = true;
@@ -354,28 +337,23 @@ public class Main extends JPanel{
 						scan.next();
 					}
 				}
-				
 				if (checker == false){
 					System.out.println(color[i].toString());
 				}
-				
 				scan.close();
 				scan = null;
 				fileReader.close();
 			}
-			
 			fileWriter.flush();
 			fileWriter.close();
 		}
 		catch(IOException io){
 			io.printStackTrace();
 		}
-		
 	}
 	
 	public void visitNode(Node node, String string){
 		File file2 = new File(freqName);
-		
 		try{
 			FileWriter fileWriter = new FileWriter(file2, true);
 			if(node.left!=null){
@@ -389,12 +367,10 @@ public class Main extends JPanel{
 			if (node.left == null && node.right == null && n < numPix){
 				fileWriter.write(node.getColor()+"\n");
 				fileWriter.write(string+"\n");
-			}
-			
+			}	
 			fileWriter.flush();
 			fileWriter.close();
 		}
-		
 		catch(IOException io){
 			io.printStackTrace();
 		}
@@ -402,13 +378,11 @@ public class Main extends JPanel{
 	
 	public void sortedInsert(Node parent){
          Node current;
- 
          if (head == null || head.frequency >= parent.frequency){
             parent.next = head;
             head = parent;
          }else{
             current = head;
- 
             while (current.next != null && current.next.frequency < parent.frequency)
                   current = current.next;
  
@@ -461,20 +435,12 @@ public class Main extends JPanel{
 	
 	public void findUnique(){
 		for (int i = 0; i< color.length ; i++){
-			exist = false;
-			/*r = (int)(color[i].getRed() * 0.299);
-			g = (int)(color[i].getGreen() * 0.587);
-			b = (int)(color[i].getBlue() *0.114);*/
-			
+			exist = false;			
 			r = color[i].getRed();
 			g = color[i].getGreen();
 			b = color[i].getBlue();
 			
 			for (int j = i-1; j >= 0; j--){
-				/*red = (int)(color[j].getRed() * 0.299);
-				green = (int)(color[j].getGreen() * 0.587);
-				blue = (int)(color[j].getBlue() *0.114);*/
-				
 				red = color[j].getRed();
 				green = color[j].getGreen();
 				blue = color[j].getBlue();
@@ -484,7 +450,6 @@ public class Main extends JPanel{
 					break;
 				}
 			}
-			
 			if(exist == false){
 				if (numPix<=0){
 					numPix++;
@@ -546,51 +511,5 @@ public class Main extends JPanel{
 		}catch(IOException io){
 			io.printStackTrace();
 		}
-	}
-
-	public void clearAll(){
-		cNewImage = true;
-		openButton.setRolloverIcon(new ImageIcon(getClass().getResource("openhover.png")));
-		System.out.println("Upload image.");
-		trainButton.setRolloverIcon(new ImageIcon(getClass().getResource("trainButton.png")));
-		compressButton.setRolloverIcon(new ImageIcon(getClass().getResource("compressButton.png")));
-		renderButton.setRolloverIcon(new ImageIcon(getClass().getResource("renderButton.png")));
-		
-		originalImage.setIcon(new ImageIcon(getClass().getResource("button.png")));
-		originalImage.setVisible(true);
-		
-		clickedB = false;
-		clickedF = false;
-		clickedT = false; 
-		clickedC = false;
-		clickedR = false;
-		trainable = false;
-		compressable = false;
-		renderable = false;
-		done = false;
-		exist = false;
-		
-		heap = null;
-		n = 0; 
-		count = 0;
-		numPix = 0;
-		maxPixels = 0;
-		frequency = 0;
-		image = null;
-		r = 0;
-		g = 0;
-		b = 0;
-
-		entryPixels = null;
-		Node[] node = new Node[numPix];
-		red = 0;
-		green = 0;
-		blue = 0;
-		root = null;
-		head = null; 
-		current = null;
-		
-		width = 368;
-		height = 424;
 	}
 }

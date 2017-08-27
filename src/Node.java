@@ -1,9 +1,7 @@
 import java.awt.Color;
 
 public class Node {
-	Node next;
-	Node left;
-	Node right;
+	Node next, left, right;
 	Color color;
 	int frequency;
 	

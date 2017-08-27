@@ -1,9 +1,7 @@
 import java.awt.Color;
 
 public class Heap {
-	int size;
-	int frequency;
-	int currentSize;
+	int size, currentSize;
 	
 	public Heap(int size){
 		this.size = size;
@@ -39,11 +37,9 @@ public class Heap {
 		if (left<=size && node[left].getFrequency() > node[i].getFrequency()){
 			max = left;
 		}
-		
 		if (right <= size && node[right].getFrequency() > node[max].getFrequency()){
 			max = right;
 		}
-		
 		if (max != i){
 			swap(node, i, max);
 			minHeap(node, max);
