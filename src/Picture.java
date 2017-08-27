@@ -22,6 +22,7 @@ public class Picture extends JPanel{
 	int y = 0;
 	File f;
 	BufferedImage img;
+	boolean hasMatch = false;
 	
 	public Picture(String renderFilename, String yunoName, String freqName, int width, int height){
 		this.renderFilename = renderFilename;
@@ -52,7 +53,9 @@ public class Picture extends JPanel{
 				img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB );
 						
 				while(scanBits.hasNext() && y!=height){
+					
 					x++;
+					//hasMatch = false;
 					bits = scanBits.next();  
 					fileCodes = new FileReader(freqName);
 					scanCodes = new Scanner(fileCodes);
@@ -68,14 +71,15 @@ public class Picture extends JPanel{
 									blue = Integer.parseInt(m.group(3));
 									colors = new Color(red, green, blue);
 									img.setRGB(x, y, colors.getRGB());
+									//hasMatch = true;
 								}
 								scanCodes.close();
 								scanCodes = null;
 								break;
 						}
-						System.out.println("...");
+						//System.out.print(".");
 					}
-					  
+					
 					if (x%width == width-1){
 						x = -1;
 						y++;
@@ -90,7 +94,7 @@ public class Picture extends JPanel{
 					}
 				}
 				
-				g2d.drawImage(img, 0, 0, this);
+				g2d.drawImage(img, 0, 0, this.getWidth(), this.getHeight(), null);
 				ImageIO.write(img, "PNG", f); 
 			}catch(IOException ex){
 				ex.printStackTrace();
